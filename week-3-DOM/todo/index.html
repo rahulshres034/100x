@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    /* center the main heading */
+    h1 {
+      text-align: center;
+    }
+
+    /* Style the form to be a flex container */
+    #todo-form {
+        display: flex;
+        margin-bottom: 20px;
+    }
+
+    /* input feild */
+    #todo-input{
+        flex-grow: 1;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px soild #ddd;
+        border-radius: 4px 0 0 4px;
+    }
+
+    /* Style the add button */
+    #add-todo{
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 0 4px 4px 0;
+        cursor: pointer;
+    }
+
+    /*  Darker the add button on hover */
+    #add-todo:hover{
+        background-color: #45a049;
+    }
+    /* Remove default list styling */
+    ul{
+        list-style-type: none;
+        padding: 0;
+    }
+
+    /* Style each list item */
+    li{
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+        border-radius: 4px;
+    }
+    /* Style completed items */
+    li.completed{
+        text-decoration: line-through;
+        opacity: 0.6;
+    }
+    /* delete button */
+    .delete-btn{
+        margin-left: auto;
+        background-color: #f44336;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .delete-btn:hover{
+        background-color: #d32f2f;
+    }
+  </style>
+  <body>
+    <h1>Todo List</h1>
+    <form id="todo-form">
+      <input
+        type="text"
+        id="todo-input"
+        placeholder="Enter a new task"
+        required
+      />
+      <button type="submit" id="add-todo">Add</button>
+    </form>
+    <ul id="todo-list"></ul>
+
+    <script>
+      // DOM elements
+      const todoForm = document.getElementById("todo-form");
+      const todoInput = document.getElementById("todo-input");
+      const todoList = document.getElementById("todo-list");
+
+      // Add event listenr for form submission
+      todoForm.addEventListener("submit", function (e) {
+        // prevent the default form submission behaviour
+        e.preventDefault();
+        // Get the trimmed value of the input field
+        const todoText = todoInput.value.trim();
+        // If the input is not empty
+        if (todoText) {
+          // Add the new todo item
+          addTodoItem(todoText);
+          // Clear the input field
+          todoInput.value = "";
+        }
+      });
+
+      // Function to add a new todo item to the list
+      function addTodoItem(text) {
+        // create a new list item element
+        const li = document.createElement("li");
+        // set the inner HTML of the list item
+        li.innerHTML = `
+                ${text}
+                <button class="delete-btn">Delete</button>
+            `;
+
+
+        // Delete todo
+        const deleteBtn = li.querySelector(".delete-btn");
+        deleteBtn.addEventListener("click", function () {
+          li.remove();
+        });
+
+        todoList.appendChild(li);
+      }
+    </script>
+  </body>
+</html>

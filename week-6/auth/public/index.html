@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Axios CDN for making HTTP requests -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+    <title>Authentication Example</title>
+</head>
+<body>
+    <!-- Sign Up Section -->
+    <div>
+        <h2>Sign Up</h2>
+        <input type="text" id="signUpUsername" placeholder="Enter Username">
+        <input type="password" id="signUpPassword" placeholder="Enter Password">
+        <button onclick="signUp()">Sign Up</button>
+    </div>
+
+    <!-- Sign In Section -->
+    <div>
+        <h2>Sign In</h2>
+        <input type="text" id="signInUsername" placeholder="Enter Username">
+        <input type="password" id="signInPassword" placeholder="Enter Password">
+        <button onclick="signIn()">Sign In</button>
+    </div>
+
+    <!-- User Information Section -->
+    <div>
+        <h2>User Information</h2>
+        <span id="information"></span>
+    </div>
+
+    <!-- Logout Button -->
+    <button onclick="logOut()">Log Out</button>
+
+    <script>
+        // Function to handle user registration
+        async function signUp() {
+            const username = document.getElementById('signUpUsername').value;
+            const password = document.getElementById('signUpPassword').value;
+
+            if (!username || !password) {
+                alert('Both username and password are required for sign-up!');
+                return;
+            }
+
+            try {
+                // Send POST request to the server to register the user
+                const response = await axios.post('http://localhost:3000/sign-up', {
+                    username,
+                    password,
+                });
+                alert('Sign-up successful!');
+            } catch (error) {
+                console.error('Error during sign-up:', error);
+                alert('Sign-up failed. Please try again.');
+            }
+        }
+
+        // Function to handle user login
+        async function signIn() {
+            const username = document.getElementById('signInUsername').value;
+            const password = document.getElementById('signInPassword').value;
+
+            if (!username || !password) {
+                alert('Both username and password are required for sign-in!');
+                return;
+            }
+
+            try {
+                // Send POST request to the server to authenticate the user
+                const response = await axios.post('http://localhost:3000/sign-in', {
+                    username,
+                    password,
+                });
+
+                if (response.data.token) {
+                    // Save the token to local storage for future requests
+                    localStorage.setItem('token', response.data.token);
+                    alert(response.data.message);
+                    // Fetch and display user information after successful login
+                    getUserInformation();
+                }
+            } catch (error) {
+                console.error('Error during sign-in:', error);
+                alert('Sign-in failed. Please check your credentials.');
+            }
+        }
+
+        // Function to fetch user information from the server
+        async function getUserInformation() {
+            try {
+                const token = localStorage.getItem('token');
+                console.log('Token:', token); // Log the token
+
+                // Send GET request with the token in the Authorization header
+                const response = await axios.get('http://localhost:3000/me', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                console.log('Response:', response); // Log the response
+
+                const informationElement = document.getElementById('information');
+                if (response.data.username) {
+                    // Display the username in the user information section
+                    informationElement.innerText = `Welcome, ${response.data.username}!`;
+                } else {
+                    informationElement.innerText = response.data.message || 'No user information found.';
+                }
+            } catch (error) {
+                console.error('Error fetching user information:', error);
+                alert('Failed to retrieve user information.');
+            }
+        }
+
+        // Function to handle user logout
+        function logOut() {
+            // Clear the token from local storage
+            localStorage.removeItem('token');
+            // Clear the user information display
+            document.getElementById('information').innerText = '';
+            alert('You have been logged out.');
+        }
+    </script>
+</body>
+</html>
