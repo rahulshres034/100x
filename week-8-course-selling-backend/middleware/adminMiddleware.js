@@ -1,19 +1,23 @@
-// Middleware to check if user is authenticated or not. 🛡️
-function adminMiddlware(req, res, next) {
-  // Check if session exists and contains adminId. 🤔
+// middleware/adminMiddleware.js
+// Middleware to verify admin authentication
+function adminMiddleware(req, res, next) {
+  // Check if admin session exists
   if (req.session && req.session.adminId) {
-    // Attach admin id to req object. 📌
+    // Attach admin ID to request object
     req.adminId = req.session.adminId;
-    // Proceed to next middleware or route handler. ➡️
     return next();
   }
-  // If not authenticated, return 401 Unauthorized. 🚫
-  return res.status(401).json({
-    message: "You are not authorized", // Error message. ❌
-  });
+  // Return unauthorized if no valid session
+  return res.status(401).json({ message: "Unauthorized" });
 }
 
-// Export the adminMiddlware. 🚀
-module.exports = {
-  adminMiddlware,
-};
+module.exports = adminMiddleware;
+
+// middleware/adminSessionMiddleware.js
+const session = require("express-session");
+const { adminSessionConfig } = require("../config/sessionConfig");
+
+// Create session middleware with admin configuration
+const adminSessionMiddleware = session(adminSessionConfig);
+
+module.exports = adminSessionMiddleware;

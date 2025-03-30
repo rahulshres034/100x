@@ -1,6 +1,5 @@
 // import mongoose to interact with MongoDB 🥭
-import mongoose from "mongoose";
-
+const mongoose = require("mongoose");
 // Using Schema and Object Id from mongoose for creating models 🛠️
 const Schema = mongoose.Schema; // Define schema for creating models 📝
 const ObjectId = mongoose.ObjectId; // Using ObjectID type for MongoDB document refrences 🔗

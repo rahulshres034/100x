@@ -1,33 +1,39 @@
-// Import the dotenv module to load environment variable form .env file ⚙️
-require("dotenv").config();
+// config/sessionConfig.js
+// Import required dependencies
+const MongoStore = require("connect-mongo"); // For storing sessions in MongoDB
+require("dotenv").config(); // Load environment variables
 
-// Import the connect-mongo package for session storage in MongoDB 💾
-const MongoStore = require("connect-mongo");
-const { Cookie } = require("express-session");
+// Get environment variables
+const MONGODB_URL = process.env.MONGODB_URL; // MongoDB connection URL
+const SESSION_ADMIN_SECRET = process.env.SESSION_ADMIN_SECRET; // Secret for admin sessions
+const SESSION_USER_SECRET = process.env.SESSION_USER_SECRET; // Secret for user sessions
 
-// Retrive MongoDB URI and session secrets  from environment variables 🔑
-const MONGODB_URL = process.env.MONGODB_URL; // MongoDB connection URL 🔗
-const SESSION_ADMIN_SECRET = process.env.SESSION_ADMIN_SECRET; // Secret for admin sessions 🤫
-const SESSION_USER_SECRET = process.env.SESSION_USER_SECRET; // Secret for user sessions 🤫
-
-// Configuration for admin sessions 👮
-adminSessionConfig = {
-  secret: SESSION_ADMIN_SECRET, // Secret key for signing the session ID cookie 🔑
-  resave: false, // Don't save session if unmodified 🔄
-  saveUninitialized: false, // Don't create session until something stored 🆕
-  store: MongoStore.create({ mongoUrl: MONGODB_URL }), // Store sessions in MongoDB 💾
+// Admin session configuration
+const adminSessionConfig = {
+  secret: SESSION_ADMIN_SECRET, // Secret key for session
+  resave: false, // Don't save session if unmodified
+  saveUninitialized: false, // Don't create session until something stored
+  store: MongoStore.create({ mongoUrl: MONGODB_URL }), // Store sessions in MongoDB
+  cookie: {
+    secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+    maxAge: 1000 * 60 * 60 * 24, // Cookie expiry: 1 day
+  },
 };
 
-// Configuration for user sessions 🧑‍💼
-userSessionConfig = {
-  secret: SESSION_USER_SECRET, // Secret key for signing the session ID cookie 🔑
-  resave: false, // Don't save session if unmodified 🔄
-  saveUninitialized: false, // Don't create session until something stored 🆕
-  store: MongoStore.create({ mongoUrl: MONGODB_URL }), // Store sessions in MongoDB 💾
+// User session configuration
+const userSessionConfig = {
+  secret: SESSION_USER_SECRET, // Secret key for session
+  resave: false, // Don't save session if unmodified
+  saveUninitialized: false, // Don't create session until something stored
+  store: MongoStore.create({ mongoUrl: MONGODB_URL }), // Store sessions in MongoDB
+  cookie: {
+    secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+    maxAge: 1000 * 60 * 60 * 24, // Cookie expiry: 1 day
+  },
 };
 
-// Export the session configurations 📤
+// Export configurations
 module.exports = {
-  adminSessionConfig, // Export admin session config 👮
-  userSessionConfig, // Export user session config 🧑‍💼
+  adminSessionConfig,
+  userSessionConfig,
 };
